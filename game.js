@@ -247,14 +247,29 @@ let mouseLocked = false;
 document.addEventListener('pointerlockchange', () => {
   mouseLocked = document.pointerLockElement === renderer.domElement;
 });
+
+function requestLock() {
+  const p = renderer.domElement.requestPointerLock();
+  if (p && p.catch) p.catch(() => {});
+}
+
 renderer.domElement.addEventListener('click', () => {
-  if (gameRunning) renderer.domElement.requestPointerLock();
+  if (gameRunning && !mouseLocked) requestLock();
 });
+
 document.addEventListener('mousemove', e => {
-  if (!mouseLocked || !gameRunning) return;
-  yaw   -= e.movementX * 0.002;
-  pitch -= e.movementY * 0.002;
-  pitch  = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
+  if (!gameRunning) return;
+  if (mouseLocked) {
+    yaw   -= e.movementX * 0.002;
+    pitch -= e.movementY * 0.002;
+  } else {
+    // Fallback: mouse offset from screen centre steers the ship
+    const dx = e.clientX - window.innerWidth  / 2;
+    const dy = e.clientY - window.innerHeight / 2;
+    yaw   = -dx / window.innerWidth  * Math.PI;
+    pitch = -dy / window.innerHeight * Math.PI * 0.6;
+  }
+  pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
 });
 
 document.addEventListener('keydown', e => { keys[e.code] = true; });
@@ -306,7 +321,7 @@ document.getElementById('start-btn').addEventListener('click', () => {
   gameRunning = true;
   storyEl.textContent = storyMessages[0].text;
   lastStoryIndex = 0;
-  renderer.domElement.requestPointerLock();
+  requestLock();
 });
 
 // ── Main loop ─────────────────────────────────────────────────────────────────
