@@ -125,23 +125,10 @@
 <div id="dist-hud"></div>
 <div id="controls">WASD / Arrows — fly &nbsp;|&nbsp; Shift — boost &nbsp;|&nbsp; Click canvas — lock mouse</div>
 
-<!-- Error fallback -->
-<div id="err">
-  Could not load Three.js.<br>Please check your internet connection and refresh.
-</div>
 
+<script src="three.min.js"></script>
 <script>
-  window.THREE_LOAD_ERROR = false;
-</script>
-<script src="https://unpkg.com/three@0.148.0/build/three.min.js"
-        onerror="window.THREE_LOAD_ERROR=true"></script>
-<script>
-if (window.THREE_LOAD_ERROR || typeof THREE === 'undefined') {
-  document.getElementById('err').style.display = 'flex';
-  document.getElementById('overlay').style.display = 'none';
-} else {
-  startGame();
-}
+startGame();
 
 function startGame() {
 
