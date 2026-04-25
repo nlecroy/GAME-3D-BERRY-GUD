@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lost in Space</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; font-family: 'Courier New', monospace; }
+    canvas { display: block; }
+
+    #hud {
+      position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 10;
+    }
+    #story {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      color: #aef; font-size: 15px; text-align: center; max-width: 600px;
+      text-shadow: 0 0 8px #4af; pointer-events: none;
+      transition: opacity 0.8s;
+    }
+    #controls {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      color: #556; font-size: 13px; text-align: center; pointer-events: none;
+    }
+    #health-bar {
+      position: fixed; top: 20px; left: 20px;
+      color: #4f8; font-size: 13px;
+    }
+    #oxygen-wrap {
+      position: fixed; top: 40px; left: 20px;
+      width: 180px; height: 12px; background: #112; border: 1px solid #4f8; border-radius: 6px;
+    }
+    #oxygen-bar {
+      height: 100%; background: linear-gradient(90deg, #4f8, #0ff);
+      border-radius: 6px; transition: width 0.5s;
+    }
+    #oxygen-label {
+      position: fixed; top: 24px; left: 20px; color: #4f8; font-size: 11px;
+    }
+    #distance-hud {
+      position: fixed; top: 20px; right: 20px; color: #fa8; font-size: 13px; text-align: right;
+    }
+    #overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 100; color: #fff;
+    }
+    #overlay h1 { font-size: 42px; color: #4af; text-shadow: 0 0 20px #4af; margin-bottom: 16px; }
+    #overlay p  { font-size: 17px; color: #adf; max-width: 520px; text-align: center; line-height: 1.7; margin-bottom: 24px; }
+    #overlay button {
+      padding: 12px 36px; font-size: 18px; font-family: inherit;
+      background: #1a3a6a; color: #4af; border: 2px solid #4af;
+      border-radius: 8px; cursor: pointer; text-shadow: 0 0 6px #4af;
+      transition: background 0.2s;
+    }
+    #overlay button:hover { background: #2a5aaa; }
+
+    #win-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,20,0.92);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 200; color: #fff; text-align: center;
+    }
+    #win-overlay h1 { font-size: 48px; color: #f8a; text-shadow: 0 0 30px #f4a; margin-bottom: 20px; }
+    #win-overlay p  { font-size: 18px; color: #fcc; max-width: 560px; line-height: 1.8; margin-bottom: 28px; }
+    #win-overlay button {
+      padding: 12px 36px; font-size: 18px; font-family: inherit;
+      background: #3a1a4a; color: #f8a; border: 2px solid #f8a;
+      border-radius: 8px; cursor: pointer;
+    }
+
+    #dead-overlay {
+      position: fixed; inset: 0; background: rgba(20,0,0,0.92);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 200; color: #fff; text-align: center;
+    }
+    #dead-overlay h1 { font-size: 48px; color: #f44; text-shadow: 0 0 30px #f44; margin-bottom: 20px; }
+    #dead-overlay p  { font-size: 17px; color: #faa; max-width: 500px; line-height: 1.8; margin-bottom: 28px; }
+    #dead-overlay button {
+      padding: 12px 36px; font-size: 18px; font-family: inherit;
+      background: #3a0a0a; color: #f44; border: 2px solid #f44;
+      border-radius: 8px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="overlay">
+  <h1>Lost in Space</h1>
+  <p>
+    Your ship is damaged. You're drifting alone in the void, millions of miles from Earth.<br><br>
+    Your sensors picked up a faint signal — a <strong>life form</strong> somewhere out there.
+    Find it. It's your only chance to get home... to your family.
+  </p>
+  <button id="start-btn">Begin Mission</button>
+</div>
+
+<div id="win-overlay">
+  <h1>You Made It Home</h1>
+  <p id="win-text"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<div id="dead-overlay">
+  <h1>Lost Forever</h1>
+  <p>Your oxygen ran out before you could find the life form.<br>Somewhere on Earth, your family still waits...</p>
+  <button onclick="location.reload()">Try Again</button>
+</div>
+
+<div id="hud">
+  <div id="story"></div>
+  <div id="health-bar">O2 Remaining</div>
+  <div id="oxygen-label">OXYGEN</div>
+  <div id="oxygen-wrap"><div id="oxygen-bar"></div></div>
+  <div id="distance-hud"></div>
+</div>
+<div id="controls">WASD / Arrow Keys — move &nbsp;|&nbsp; Mouse — look &nbsp;|&nbsp; Q/E — roll</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
