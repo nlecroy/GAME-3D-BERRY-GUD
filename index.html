@@ -8,113 +8,491 @@
     body { background: #000; overflow: hidden; font-family: 'Courier New', monospace; }
     canvas { display: block; }
 
-    #hud {
-      position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 10;
-    }
     #story {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
       color: #aef; font-size: 15px; text-align: center; max-width: 600px;
       text-shadow: 0 0 8px #4af; pointer-events: none;
-      transition: opacity 0.8s;
     }
     #controls {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      color: #556; font-size: 13px; text-align: center; pointer-events: none;
+      color: #445; font-size: 13px; text-align: center; pointer-events: none;
     }
-    #health-bar {
-      position: fixed; top: 20px; left: 20px;
-      color: #4f8; font-size: 13px;
+    #oxy-label {
+      position: fixed; top: 20px; left: 20px; color: #4f8; font-size: 11px; letter-spacing: 1px;
     }
-    #oxygen-wrap {
-      position: fixed; top: 40px; left: 20px;
-      width: 180px; height: 12px; background: #112; border: 1px solid #4f8; border-radius: 6px;
+    #oxy-wrap {
+      position: fixed; top: 36px; left: 20px;
+      width: 160px; height: 10px; background: #112; border: 1px solid #4f8; border-radius: 5px;
     }
-    #oxygen-bar {
-      height: 100%; background: linear-gradient(90deg, #4f8, #0ff);
-      border-radius: 6px; transition: width 0.5s;
+    #oxy-bar {
+      height: 100%; width: 100%; background: linear-gradient(90deg, #4f8, #0ff);
+      border-radius: 5px; transition: width 0.4s;
     }
-    #oxygen-label {
-      position: fixed; top: 24px; left: 20px; color: #4f8; font-size: 11px;
-    }
-    #distance-hud {
+    #dist-hud {
       position: fixed; top: 20px; right: 20px; color: #fa8; font-size: 13px; text-align: right;
     }
+
     #overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 100; color: #fff;
     }
-    #overlay h1 { font-size: 42px; color: #4af; text-shadow: 0 0 20px #4af; margin-bottom: 16px; }
-    #overlay p  { font-size: 17px; color: #adf; max-width: 520px; text-align: center; line-height: 1.7; margin-bottom: 24px; }
-    #overlay button {
-      padding: 12px 36px; font-size: 18px; font-family: inherit;
-      background: #1a3a6a; color: #4af; border: 2px solid #4af;
-      border-radius: 8px; cursor: pointer; text-shadow: 0 0 6px #4af;
-      transition: background 0.2s;
+    #overlay h1 {
+      font-size: 44px; color: #4af; text-shadow: 0 0 24px #4af;
+      margin-bottom: 18px; letter-spacing: 2px;
     }
-    #overlay button:hover { background: #2a5aaa; }
+    #overlay p {
+      font-size: 16px; color: #adf; max-width: 520px; text-align: center;
+      line-height: 1.8; margin-bottom: 28px;
+    }
+    #start-btn {
+      padding: 14px 40px; font-size: 18px; font-family: inherit;
+      background: #0d2040; color: #4af; border: 2px solid #4af;
+      border-radius: 6px; cursor: pointer; text-shadow: 0 0 6px #4af;
+      letter-spacing: 1px;
+    }
+    #start-btn:hover { background: #1a3a6a; }
 
-    #win-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,20,0.92);
+    .end-screen {
+      position: fixed; inset: 0;
       display: none; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 200; color: #fff; text-align: center;
+      z-index: 200; color: #fff; text-align: center; padding: 20px;
     }
-    #win-overlay h1 { font-size: 48px; color: #f8a; text-shadow: 0 0 30px #f4a; margin-bottom: 20px; }
-    #win-overlay p  { font-size: 18px; color: #fcc; max-width: 560px; line-height: 1.8; margin-bottom: 28px; }
-    #win-overlay button {
-      padding: 12px 36px; font-size: 18px; font-family: inherit;
-      background: #3a1a4a; color: #f8a; border: 2px solid #f8a;
-      border-radius: 8px; cursor: pointer;
-    }
+    #win-screen  { background: rgba(0,0,20,0.93); }
+    #dead-screen { background: rgba(20,0,0,0.93); }
 
-    #dead-overlay {
-      position: fixed; inset: 0; background: rgba(20,0,0,0.92);
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 200; color: #fff; text-align: center;
+    #win-screen  h1 { font-size: 46px; color: #f8a; text-shadow: 0 0 30px #f4a; margin-bottom: 18px; }
+    #dead-screen h1 { font-size: 46px; color: #f44; text-shadow: 0 0 30px #f44; margin-bottom: 18px; }
+    .end-screen p { font-size: 17px; max-width: 540px; line-height: 1.8; margin-bottom: 26px; opacity: 0.9; }
+    #win-screen  p { color: #fcc; }
+    #dead-screen p { color: #faa; }
+    .end-screen button {
+      padding: 12px 34px; font-size: 17px; font-family: inherit;
+      border-radius: 6px; cursor: pointer;
     }
-    #dead-overlay h1 { font-size: 48px; color: #f44; text-shadow: 0 0 30px #f44; margin-bottom: 20px; }
-    #dead-overlay p  { font-size: 17px; color: #faa; max-width: 500px; line-height: 1.8; margin-bottom: 28px; }
-    #dead-overlay button {
-      padding: 12px 36px; font-size: 18px; font-family: inherit;
-      background: #3a0a0a; color: #f44; border: 2px solid #f44;
-      border-radius: 8px; cursor: pointer;
+    #win-screen  button { background: #2a0a3a; color: #f8a; border: 2px solid #f8a; }
+    #dead-screen button { background: #2a0a0a; color: #f44; border: 2px solid #f44; }
+
+    #err {
+      position: fixed; inset: 0; background: #000;
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; color: #f44; font-size: 18px; text-align: center; padding: 20px;
     }
   </style>
 </head>
 <body>
 
+<!-- Start screen -->
 <div id="overlay">
-  <h1>Lost in Space</h1>
+  <h1>LOST IN SPACE</h1>
   <p>
-    Your ship is damaged. You're drifting alone in the void, millions of miles from Earth.<br><br>
-    Your sensors picked up a faint signal — a <strong>life form</strong> somewhere out there.
-    Find it. It's your only chance to get home... to your family.
+    Your ship is damaged. You're drifting alone in the void,<br>
+    millions of miles from Earth.<br><br>
+    Your sensors picked up a faint signal — a <strong style="color:#4f8">life form</strong>
+    somewhere out there.<br>
+    Find it. It's your only chance to get home… to your family.
   </p>
-  <button id="start-btn">Begin Mission</button>
+  <button id="start-btn">BEGIN MISSION</button>
 </div>
 
-<div id="win-overlay">
-  <h1>You Made It Home</h1>
-  <p id="win-text"></p>
+<!-- Win screen -->
+<div id="win-screen" class="end-screen">
+  <h1>YOU MADE IT HOME</h1>
+  <p>
+    The creature pulses with warm light, wrapping your ship in a strange energy field.<br><br>
+    It guides your battered vessel through a fold in space —<br>
+    and suddenly, there it is.<br><br>
+    <strong>Earth.</strong> Blue and perfect against the black.<br><br>
+    You're going home.
+  </p>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<div id="dead-overlay">
-  <h1>Lost Forever</h1>
-  <p>Your oxygen ran out before you could find the life form.<br>Somewhere on Earth, your family still waits...</p>
+<!-- Dead screen -->
+<div id="dead-screen" class="end-screen">
+  <h1>LOST FOREVER</h1>
+  <p>
+    Your oxygen ran out before you could find the life form.<br>
+    Somewhere on Earth, your family still waits…
+  </p>
   <button onclick="location.reload()">Try Again</button>
 </div>
 
-<div id="hud">
-  <div id="story"></div>
-  <div id="health-bar">O2 Remaining</div>
-  <div id="oxygen-label">OXYGEN</div>
-  <div id="oxygen-wrap"><div id="oxygen-bar"></div></div>
-  <div id="distance-hud"></div>
-</div>
-<div id="controls">WASD / Arrow Keys — move &nbsp;|&nbsp; Mouse — look &nbsp;|&nbsp; Q/E — roll</div>
+<!-- HUD -->
+<div id="oxy-label">OXYGEN</div>
+<div id="oxy-wrap"><div id="oxy-bar"></div></div>
+<div id="story"></div>
+<div id="dist-hud"></div>
+<div id="controls">WASD / Arrows — fly &nbsp;|&nbsp; Shift — boost &nbsp;|&nbsp; Click canvas — lock mouse</div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
-<script src="game.js"></script>
+<!-- Error fallback -->
+<div id="err">
+  Could not load Three.js.<br>Please check your internet connection and refresh.
+</div>
+
+<script>
+  window.THREE_LOAD_ERROR = false;
+</script>
+<script src="https://unpkg.com/three@0.148.0/build/three.min.js"
+        onerror="window.THREE_LOAD_ERROR=true"></script>
+<script>
+if (window.THREE_LOAD_ERROR || typeof THREE === 'undefined') {
+  document.getElementById('err').style.display = 'flex';
+  document.getElementById('overlay').style.display = 'none';
+} else {
+  startGame();
+}
+
+function startGame() {
+
+// ── Renderer ──────────────────────────────────────────────────────────────────
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = false;
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ── Scene & Camera ────────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000008, 0.0012);
+
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2000);
+camera.position.set(0, 2.5, 10);
+
+// ── Lights ────────────────────────────────────────────────────────────────────
+scene.add(new THREE.AmbientLight(0x223355, 3));
+
+const sun = new THREE.DirectionalLight(0xffeedd, 2);
+sun.position.set(200, 150, -200);
+scene.add(sun);
+
+const alienGlow = new THREE.PointLight(0x00ffaa, 6, 120, 1);
+scene.add(alienGlow);
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+(function makeStars() {
+  const geo = new THREE.BufferGeometry();
+  const N = 9000, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N * 3; i++) pos[i] = (Math.random() - 0.5) * 1800;
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.55 })));
+})();
+
+// ── Nebula ────────────────────────────────────────────────────────────────────
+const nebulaColors = [0x220077, 0x770033, 0x004488, 0x115522];
+for (let i = 0; i < 10; i++) {
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(100 + Math.random() * 130, 70 + Math.random() * 100),
+    new THREE.MeshBasicMaterial({
+      color: nebulaColors[i % 4], transparent: true,
+      opacity: 0.04 + Math.random() * 0.05, side: THREE.DoubleSide, depthWrite: false
+    })
+  );
+  m.position.set((Math.random()-.5)*700, (Math.random()-.5)*400, (Math.random()-.5)*700);
+  m.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
+  scene.add(m);
+}
+
+// ── Planets ───────────────────────────────────────────────────────────────────
+function makePlanet(r, color, x, y, z, ring) {
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(r, 32, 32),
+    new THREE.MeshLambertMaterial({ color })
+  );
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
+  if (ring) {
+    const rm = new THREE.Mesh(
+      new THREE.TorusGeometry(r * 1.6, r * 0.22, 6, 64),
+      new THREE.MeshLambertMaterial({ color: 0xddbb77, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+    );
+    rm.rotation.x = Math.PI / 3;
+    mesh.add(rm);
+  }
+  return mesh;
+}
+const planet1 = makePlanet(30, 0x2255bb, -250, -60, -420, false);
+const planet2 = makePlanet(52, 0xbb7722, 360, 90, -520, true);
+const planet3 = makePlanet(18, 0x227744, 110, -120, -310, false);
+
+// ── Asteroids ─────────────────────────────────────────────────────────────────
+const asteroids = [];
+for (let i = 0; i < 38; i++) {
+  const r = 1.8 + Math.random() * 3.5;
+  const mesh = new THREE.Mesh(
+    new THREE.DodecahedronGeometry(r, 0),
+    new THREE.MeshLambertMaterial({ color: 0x554433 })
+  );
+  mesh.position.set(
+    (Math.random() - 0.5) * 280,
+    (Math.random() - 0.5) * 180,
+    (Math.random() - 0.5) * 280
+  );
+  mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+  mesh.userData.spin = new THREE.Vector3(
+    (Math.random()-.5)*0.012, (Math.random()-.5)*0.012, (Math.random()-.5)*0.012
+  );
+  mesh.userData.r = r;
+  scene.add(mesh);
+  asteroids.push(mesh);
+}
+
+// ── Player Ship ───────────────────────────────────────────────────────────────
+const ship = new THREE.Group();
+scene.add(ship);
+
+// body (cone pointing forward = -Z)
+const bodyMesh = new THREE.Mesh(
+  new THREE.ConeGeometry(0.75, 3.5, 8),
+  new THREE.MeshLambertMaterial({ color: 0xaabbcc })
+);
+bodyMesh.rotation.x = Math.PI / 2;
+ship.add(bodyMesh);
+
+// wings
+function wing(flip) {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+    0,0,0,  flip*3,0,0.4,  flip*2,0,-1.6
+  ]), 3));
+  geo.setIndex([0,1,2]);
+  geo.computeVertexNormals();
+  return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0x7788aa, side: THREE.DoubleSide }));
+}
+ship.add(wing(1));
+ship.add(wing(-1));
+
+// cockpit
+ship.add(Object.assign(
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.45, 12, 12),
+    new THREE.MeshLambertMaterial({ color: 0x88ccff, transparent: true, opacity: 0.75 })
+  ),
+  { position: new THREE.Vector3(0, 0.28, 0.85) }
+));
+
+// engine nozzle
+const engMat = new THREE.MeshBasicMaterial({ color: 0xff5500 });
+const eng = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.46, 0.4, 10), engMat);
+eng.rotation.x = Math.PI / 2;
+eng.position.set(0, 0, -2.1);
+ship.add(eng);
+
+const thrustLight = new THREE.PointLight(0xff4400, 4, 12, 1);
+thrustLight.position.set(0, 0, -2.6);
+ship.add(thrustLight);
+
+// ── Alien ─────────────────────────────────────────────────────────────────────
+const alien = new THREE.Group();
+
+const orbMat = new THREE.MeshLambertMaterial({
+  color: 0x00ffaa, emissive: 0x00aa55, transparent: true, opacity: 0.88
+});
+alien.add(new THREE.Mesh(new THREE.SphereGeometry(2.5, 28, 28), orbMat));
+
+for (let i = 0; i < 8; i++) {
+  const a = (i / 8) * Math.PI * 2;
+  const tentGeo = new THREE.TubeGeometry(
+    new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(Math.cos(a)*2, -1.8 - Math.random(), Math.sin(a)*2),
+      new THREE.Vector3(Math.cos(a)*3.8, -3.2 - Math.random()*2, Math.sin(a)*3.8),
+    ]), 10, 0.16, 5
+  );
+  alien.add(new THREE.Mesh(tentGeo,
+    new THREE.MeshLambertMaterial({ color: 0x00cc88, emissive: 0x003311 })
+  ));
+}
+
+for (let i = 0; i < 3; i++) {
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(3.3 + i * 0.5, 0.1, 7, 44),
+    new THREE.MeshBasicMaterial({ color: 0x44ffcc })
+  );
+  ring.rotation.x = (i * Math.PI) / 3;
+  ring.userData.spd = 0.006 + i * 0.003;
+  alien.add(ring);
+}
+
+const ALIEN_POS = new THREE.Vector3(120, 30, -200);
+alien.position.copy(ALIEN_POS);
+alienGlow.position.copy(ALIEN_POS);
+scene.add(alien);
+
+// ── Signal trail ──────────────────────────────────────────────────────────────
+const NSIG = 60;
+const sigPos = new Float32Array(NSIG * 3);
+for (let i = 0; i < NSIG; i++) {
+  const t = i / NSIG;
+  const p = new THREE.Vector3().lerpVectors(new THREE.Vector3(), ALIEN_POS, t);
+  p.x += (Math.random()-.5)*14; p.y += (Math.random()-.5)*14; p.z += (Math.random()-.5)*14;
+  sigPos[i*3]=p.x; sigPos[i*3+1]=p.y; sigPos[i*3+2]=p.z;
+}
+const sigGeo = new THREE.BufferGeometry();
+sigGeo.setAttribute('position', new THREE.BufferAttribute(sigPos, 3));
+const sigMat = new THREE.PointsMaterial({ color: 0x00ffaa, size: 0.6, transparent: true, opacity: 0.5 });
+scene.add(new THREE.Points(sigGeo, sigMat));
+
+// ── Game state ────────────────────────────────────────────────────────────────
+const keys = {};
+let gameRunning = false;
+let oxygen = 1.0;
+let yaw = 0, pitch = 0;
+const shipQuat = new THREE.Quaternion();
+let mouseLocked = false;
+const camOffset = new THREE.Vector3(0, 2.5, 10);
+
+// ── Pointer lock ──────────────────────────────────────────────────────────────
+document.addEventListener('pointerlockchange', () => {
+  mouseLocked = document.pointerLockElement === renderer.domElement;
+});
+renderer.domElement.addEventListener('click', () => {
+  if (gameRunning && !mouseLocked) {
+    const p = renderer.domElement.requestPointerLock();
+    if (p && p.catch) p.catch(() => {});
+  }
+});
+document.addEventListener('mousemove', e => {
+  if (!gameRunning) return;
+  if (mouseLocked) {
+    yaw   -= e.movementX * 0.002;
+    pitch -= e.movementY * 0.002;
+  } else {
+    yaw   = -(e.clientX - window.innerWidth/2)  / window.innerWidth  * Math.PI;
+    pitch = -(e.clientY - window.innerHeight/2) / window.innerHeight * Math.PI * 0.6;
+  }
+  pitch = Math.max(-1.3, Math.min(1.3, pitch));
+});
+
+document.addEventListener('keydown', e => { keys[e.code] = true; });
+document.addEventListener('keyup',   e => { keys[e.code] = false; });
+
+// ── Story beats ───────────────────────────────────────────────────────────────
+const storyEl = document.getElementById('story');
+const beats = [
+  { d: 9999, t: 'Day 47. Systems failing. Oxygen critical. You have to find that signal…' },
+  { d: 200,  t: 'The signal is getting stronger. Keep going.' },
+  { d: 100,  t: 'Something luminous in the dark — you can almost see it.' },
+  { d: 50,   t: "It's alive! Something beautiful and alien. It's waiting for you." },
+  { d: 20,   t: 'REACH IT.' },
+];
+let beatIdx = 0;
+
+function checkBeats(dist) {
+  for (let i = beats.length - 1; i > beatIdx; i--) {
+    if (dist <= beats[i].d) { storyEl.textContent = beats[i].t; beatIdx = i; break; }
+  }
+}
+
+// ── Start button ──────────────────────────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('overlay').style.display = 'none';
+  gameRunning = true;
+  storyEl.textContent = beats[0].t;
+  const p = renderer.domElement.requestPointerLock();
+  if (p && p.catch) p.catch(() => {});
+});
+
+// ── Main loop ─────────────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (!gameRunning) { renderer.render(scene, camera); return; }
+
+  const t = clock.getElapsedTime();
+
+  // Orientation
+  const qY = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), yaw);
+  const qP = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), pitch);
+  if (keys['KeyQ']) yaw += 0.016;
+  if (keys['KeyE']) yaw -= 0.016;
+  shipQuat.copy(qY).multiply(qP);
+  ship.quaternion.copy(shipQuat);
+
+  // Movement
+  const fwd   = new THREE.Vector3(0,0,-1).applyQuaternion(shipQuat);
+  const right = new THREE.Vector3(1,0,0).applyQuaternion(shipQuat);
+  const boost = keys['ShiftLeft'] || keys['ShiftRight'];
+  const spd   = boost ? 0.55 : 0.25;
+  let moving  = false;
+
+  if (keys['KeyW'] || keys['ArrowUp'])    { ship.position.addScaledVector(fwd, spd);        moving = true; }
+  if (keys['KeyS'] || keys['ArrowDown'])  { ship.position.addScaledVector(fwd, -spd*0.6);   moving = true; }
+  if (keys['KeyA'] || keys['ArrowLeft'])  { ship.position.addScaledVector(right, -spd*0.7); moving = true; }
+  if (keys['KeyD'] || keys['ArrowRight']) { ship.position.addScaledVector(right,  spd*0.7); moving = true; }
+
+  thrustLight.intensity = moving ? (boost ? 6 : 3) : 0.4;
+  engMat.color.setHex(moving ? (boost ? 0xff9900 : 0xff5500) : 0x331100);
+
+  // Camera
+  const camTarget = ship.position.clone().add(camOffset.clone().applyQuaternion(shipQuat));
+  camera.position.lerp(camTarget, 0.1);
+  camera.quaternion.copy(shipQuat);
+
+  // Asteroids
+  for (const a of asteroids) {
+    a.rotation.x += a.userData.spin.x;
+    a.rotation.y += a.userData.spin.y;
+    a.rotation.z += a.userData.spin.z;
+    if (a.position.distanceTo(ship.position) < a.userData.r + 1.3) {
+      const bounce = ship.position.clone().sub(a.position).normalize();
+      ship.position.addScaledVector(bounce, 2.2);
+      oxygen -= 0.04;
+    }
+  }
+
+  // Alien animation
+  alien.rotation.y += 0.005;
+  alien.position.y = ALIEN_POS.y + Math.sin(t * 0.6) * 3;
+  alienGlow.position.copy(alien.position);
+  alienGlow.intensity = 5 + 3 * Math.sin(t * 2);
+  orbMat.emissive.setHSL(0.42 + 0.04 * Math.sin(t), 1, 0.25 + 0.15 * Math.sin(t*1.8));
+  alien.children.forEach(c => { if (c.userData.spd) c.rotation.z += c.userData.spd; });
+
+  sigMat.opacity = 0.3 + 0.25 * Math.sin(t * 3);
+
+  planet1.rotation.y += 0.0003;
+  planet2.rotation.y += 0.0002;
+  planet3.rotation.y += 0.0005;
+
+  // Oxygen
+  oxygen = Math.max(0, oxygen - 0.000032);
+  document.getElementById('oxy-bar').style.width  = (oxygen * 100) + '%';
+  document.getElementById('oxy-bar').style.background =
+    oxygen > 0.4 ? 'linear-gradient(90deg,#4f8,#0ff)' :
+    oxygen > 0.2 ? 'linear-gradient(90deg,#ff8,#fa0)' :
+                   'linear-gradient(90deg,#f44,#f80)';
+
+  // Distance
+  const dist = ship.position.distanceTo(alien.position);
+  document.getElementById('dist-hud').innerHTML =
+    `Signal: <strong>${Math.round(dist)} units</strong><br>` +
+    `<span style="color:#88f;font-size:11px">↑ follow the green particles</span>`;
+  checkBeats(dist);
+
+  if (dist < 8)      { endGame('win');  return; }
+  if (oxygen <= 0)   { endGame('dead'); return; }
+
+  renderer.render(scene, camera);
+}
+
+function endGame(result) {
+  gameRunning = false;
+  if (document.exitPointerLock) document.exitPointerLock();
+  document.getElementById(result === 'win' ? 'win-screen' : 'dead-screen').style.display = 'flex';
+}
+
+animate();
+
+} // end startGame
+</script>
 </body>
 </html>
